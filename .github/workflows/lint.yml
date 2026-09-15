@@ -1,0 +1,23 @@
+name: Lint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install lint and test tools
+        run: brew install luacheck neovim stylua
+      - name: Check Lua formatting
+        run: stylua --check lua tests
+      - name: Lint Lua
+        run: luacheck lua tests --globals vim --no-max-line-length
+      - name: Run Lua tests
+        run: nvim --headless --clean -l tests/run.lua
