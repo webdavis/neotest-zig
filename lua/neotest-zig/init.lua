@@ -29,6 +29,11 @@ local REPORT_VARIABLE = "NEOTEST_ZIG_REPORT"
 -- makes it emit one plain line per test, and keeps the live output neotest
 -- displays. `exec` replaces the pipeline's own subshell so no extra process
 -- outlives the run.
+--
+-- The pipeline reports `tee`'s exit status rather than zig's, so a failing run
+-- exits 0. Nothing reads that status: every verdict comes from the report, and
+-- a run that produced no record at all is failed on that basis. Recovering it
+-- portably costs a status file and a subshell, which buys nothing.
 local TEE_THROUGH_A_PIPE = ('exec "$@" 2>&1 | tee -- "$%s"'):format(REPORT_VARIABLE)
 
 ---@param name string
